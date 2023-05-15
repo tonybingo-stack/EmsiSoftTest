@@ -20,6 +20,8 @@ namespace BackgroundWorker
         IConnection connection;
         IModel channel;
         EventingBasicConsumer consumer;
+        List<string> hashList = new List<string>();
+        int hashCount = 0;
 
         public Form1()
         {
@@ -35,25 +37,27 @@ namespace BackgroundWorker
                                  autoDelete: false,
                                  arguments: null);
 
-            Console.WriteLine("waiting incoming message");
             consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, ea) =>
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                this.listBox1.Items.Add(message);
-                Console.WriteLine($" [x] Received {message}");
+                // save hash to db
+                hashList.Add(message);
+                hashCount++;
+
+                if (!backgroundWorker2.IsBusy)
+                {
+                    backgroundWorker2.RunWorkerAsync(0);
+                }
             };
-            channel.BasicConsume(queue: "hello",
-                                 autoAck: true,
-                                 consumer: consumer);
+            channel.BasicConsume(queue: "hello", autoAck: true, consumer: consumer);
         }
 
         private void start_Click(object sender, EventArgs e)
         {
-            if (!backgroundWorker2.IsBusy)
-                backgroundWorker2.RunWorkerAsync(2000);
-
+            //if (!backgroundWorker2.IsBusy)
+            //    backgroundWorker2.RunWorkerAsync("ok");
         }
 
         private void end_Click(object sender, EventArgs e)
@@ -78,17 +82,19 @@ namespace BackgroundWorker
 
         private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (e.Cancelled) MessageBox.Show("Operation was canceled");
-            else if (e.Error != null) MessageBox.Show(e.Error.Message);
-            else MessageBox.Show(e.Result.ToString());
+            //if (e.Cancelled) MessageBox.Show("Operation was canceled");
+            //else if (e.Error != null) MessageBox.Show(e.Error.Message);
+            //else MessageBox.Show(e.Result.ToString());
         }
 
         private int BackgroundProcessLogicMethod(System.ComponentModel.BackgroundWorker bw, int a)
         {
-            int result = 0;
-            Thread.Sleep(10000);
-            MessageBox.Show("I was doing some work in the background.");
-            return result;
+            for(int i = 0; i < hashCount; i++)
+            {
+                this.listBox1.Items.Add(hashList[i]);
+                Thread.Sleep(100);
+            }
+            return 0;
         }
     }
 }

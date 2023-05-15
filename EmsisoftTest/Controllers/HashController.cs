@@ -30,15 +30,7 @@ namespace EmsisoftTest.Controllers
                                  autoDelete: false,
                                  arguments: null);
 
-            //var message = "Hello World!";
-            //var body = Encoding.UTF8.GetBytes(message);
-
-            //channel.BasicPublish(exchange: string.Empty,
-            //                     routingKey: "hello",
-            //                     basicProperties: null,
-            //                     body: body);
-
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++) //FIXME: 40000
             {
                 string randomString = GenerateRandomString();
                 string sha1Hash = CalculateSHA1Hash(randomString);
