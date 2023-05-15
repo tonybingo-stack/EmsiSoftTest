@@ -9,19 +9,50 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+
 namespace BackgroundWorker
 {
     public partial class Form1 : Form
     {
+        ConnectionFactory connectionFactory;
+        IConnection connection;
+        IModel channel;
+        EventingBasicConsumer consumer;
+
         public Form1()
         {
             InitializeComponent();
+
+            connectionFactory = new ConnectionFactory { HostName = "localhost" };
+            connection = connectionFactory.CreateConnection();
+            channel = connection.CreateModel();
+
+            channel.QueueDeclare(queue: "hello",
+                                 durable: false,
+                                 exclusive: false,
+                                 autoDelete: false,
+                                 arguments: null);
+            Console.WriteLine("waiting incoming message");
+            consumer = new EventingBasicConsumer(channel);
+            consumer.Received += (model, ea) =>
+            {
+                var body = ea.Body.ToArray();
+                var message = Encoding.UTF8.GetString(body);
+                this.textBox1.Text = message;
+                Console.WriteLine($" [x] Received {message}");
+            };
+            channel.BasicConsume(queue: "hello",
+                                 autoAck: true,
+                                 consumer: consumer);
         }
 
         private void start_Click(object sender, EventArgs e)
         {
             if (!backgroundWorker2.IsBusy)
                 backgroundWorker2.RunWorkerAsync(2000);
+
         }
 
         private void end_Click(object sender, EventArgs e)

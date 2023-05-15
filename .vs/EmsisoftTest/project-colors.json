@@ -1,0 +1,21 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "490c1cf0-85af-4c0a-ad9f-816e36910750": {
+      "ProjectGuid": "490c1cf0-85af-4c0a-ad9f-816e36910750",
+      "DisplayName": "EmsisoftTest",
+      "ColorIndex": 0
+    },
+    "220e1396-2226-4143-a870-0ffd049a2422": {
+      "ProjectGuid": "220e1396-2226-4143-a870-0ffd049a2422",
+      "DisplayName": "BackgroundWorker",
+      "ColorIndex": 1
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
+    }
+  },
+  "NextColorIndex": 2
+}
