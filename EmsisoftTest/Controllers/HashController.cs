@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace EmsisoftTest.Controllers
 {
@@ -29,16 +30,51 @@ namespace EmsisoftTest.Controllers
                                  autoDelete: false,
                                  arguments: null);
 
-            var message = "Hello World!";
-            var body = Encoding.UTF8.GetBytes(message);
+            //var message = "Hello World!";
+            //var body = Encoding.UTF8.GetBytes(message);
 
-            channel.BasicPublish(exchange: string.Empty,
-                                 routingKey: "hello",
-                                 basicProperties: null,
-                                 body: body);
-            Console.WriteLine($" [x] Sent {message}");
+            //channel.BasicPublish(exchange: string.Empty,
+            //                     routingKey: "hello",
+            //                     basicProperties: null,
+            //                     body: body);
 
-            return Ok("ok");
+            for (int i = 0; i < 10; i++)
+            {
+                string randomString = GenerateRandomString();
+                string sha1Hash = CalculateSHA1Hash(randomString);
+
+                var message = Encoding.UTF8.GetBytes(sha1Hash);
+
+                channel.BasicPublish(exchange: string.Empty,
+                                     routingKey: "hello",
+                                     basicProperties: null,
+                                     body: message);
+                Console.WriteLine(sha1Hash);
+            }
+
+            return Ok("success");
+        }
+
+        static string GenerateRandomString()
+        {
+            Guid guid = Guid.NewGuid();
+            return guid.ToString();
+        }
+
+        static string CalculateSHA1Hash(string input)
+        {
+            using (SHA1Managed sha1 = new SHA1Managed())
+            {
+                byte[] hashBytes = sha1.ComputeHash(Encoding.UTF8.GetBytes(input));
+                StringBuilder stringBuilder = new StringBuilder();
+
+                for (int i = 0; i < hashBytes.Length; i++)
+                {
+                    stringBuilder.Append(hashBytes[i].ToString("x2"));
+                }
+
+                return stringBuilder.ToString();
+            }
         }
     }
 }
