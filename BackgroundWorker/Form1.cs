@@ -93,6 +93,7 @@ namespace BackgroundWorker
             {
                 this.listBox1.Items.Add(hashList[i]);
                 Thread.Sleep(100);
+                //Add to db
             }
             return 0;
         }

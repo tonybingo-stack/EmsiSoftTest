@@ -4,6 +4,8 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Security.Cryptography;
+using EmsisoftTest.Context;
+using EmsisoftTest.Models;
 
 namespace EmsisoftTest.Controllers
 {
@@ -11,11 +13,16 @@ namespace EmsisoftTest.Controllers
     [Route("[controller]")]
     public class HashController : ControllerBase
     {
+        private MyContext _context;
+        public HashController(MyContext context)
+        {
+            _context = context;
+        }
 
         [HttpGet(Name = "GetHashes")]
-        public IActionResult Get()
+        public IEnumerable<HashData> Get()
         {
-            return Ok("ok");
+            return _context.hashes;
         }
         [HttpPost(Name = "GenerateHashes")]
         public IActionResult Post()
