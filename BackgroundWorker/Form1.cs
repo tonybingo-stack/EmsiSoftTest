@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using BackgroundWorker.Models;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -91,11 +91,26 @@ namespace BackgroundWorker
         {
             for(int i = 0; i < hashCount; i++)
             {
-                this.listBox1.Items.Add(hashList[i]);
-                Thread.Sleep(100);
-                //Add to db
+                bool result = SaveHash(hashList[i]);
             }
             return 0;
+        }
+        public bool SaveHash(string hashCode) // calling SaveStudentMethod for insert a new record
+        {
+            hash h = new hash();
+            h.id = Guid.NewGuid();
+            h.date = DateTime.Now;
+            h.sha1 = hashCode;
+
+            bool result = false;
+            using (HashConnectionStr _entity = new HashConnectionStr())
+            {
+                //_entity.hashes.Add(d);
+                _entity.hashes.Add(h);
+                _entity.SaveChanges();
+                result = true;
+            }
+            return result;
         }
     }
 }
