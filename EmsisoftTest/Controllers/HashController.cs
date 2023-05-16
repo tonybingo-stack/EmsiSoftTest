@@ -6,6 +6,8 @@ using System.Text;
 using System.Security.Cryptography;
 using EmsisoftTest.Context;
 using EmsisoftTest.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace EmsisoftTest.Controllers
 {
@@ -20,9 +22,31 @@ namespace EmsisoftTest.Controllers
         }
 
         [HttpGet(Name = "GetHashes")]
-        public IEnumerable<HashData> Get()
+        public string Get()
         {
-            return _context.hashes;
+            var hashTable = _context.hashes;
+
+            var hashResponse = new HashResponse
+            {
+                Hashes = hashTable
+                    .GroupBy(h => h.date.Date)
+                    .Select(g => new HashEntry
+                    {
+                        Date = g.Key.Date,
+                        Count = g.Sum(h => 1)
+                    })
+                    .ToList()
+            };
+
+            var jsonSettings = new JsonSerializerSettings
+            {
+                DateFormatString = "yyyy-MM-dd",
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+
+            string jsonResponse = JsonConvert.SerializeObject(hashResponse, jsonSettings);
+
+            return jsonResponse;
         }
         [HttpPost(Name = "GenerateHashes")]
         public IActionResult Post()
@@ -37,7 +61,7 @@ namespace EmsisoftTest.Controllers
                                  autoDelete: false,
                                  arguments: null);
 
-            for (int i = 0; i < 10; i++) //FIXME: 40000
+            for (int i = 0; i < 40000; i++) 
             {
                 string randomString = GenerateRandomString();
                 string sha1Hash = CalculateSHA1Hash(randomString);
@@ -48,7 +72,6 @@ namespace EmsisoftTest.Controllers
                                      routingKey: "hello",
                                      basicProperties: null,
                                      body: message);
-                Console.WriteLine(sha1Hash);
             }
 
             return Ok("success");

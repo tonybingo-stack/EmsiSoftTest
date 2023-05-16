@@ -82,18 +82,18 @@ namespace BackgroundWorker
 
         private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            //if (e.Cancelled) MessageBox.Show("Operation was canceled");
-            //else if (e.Error != null) MessageBox.Show(e.Error.Message);
-            //else MessageBox.Show(e.Result.ToString());
+            if (e.Cancelled) MessageBox.Show("Operation was canceled");
+            else if (e.Error != null) MessageBox.Show(e.Error.Message);
+            else MessageBox.Show(e.Result.ToString());
         }
 
-        private int BackgroundProcessLogicMethod(System.ComponentModel.BackgroundWorker bw, int a)
+        private string BackgroundProcessLogicMethod(System.ComponentModel.BackgroundWorker bw, int a)
         {
             for(int i = 0; i < hashCount; i++)
             {
                 bool result = SaveHash(hashList[i]);
             }
-            return 0;
+            return hashCount + " hashCodes Inserted to Database";
         }
         public bool SaveHash(string hashCode) // calling SaveStudentMethod for insert a new record
         {

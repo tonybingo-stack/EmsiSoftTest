@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmsisoftTest.Migrations
 {
     [DbContext(typeof(MyContext))]
-    [Migration("20230516010317_MigrationV1")]
+    [Migration("20230516022838_MigrationV1")]
     partial class MigrationV1
     {
         /// <inheritdoc />
