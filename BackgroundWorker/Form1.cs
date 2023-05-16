@@ -50,23 +50,9 @@ namespace BackgroundWorker
                 {
                     backgroundWorker2.RunWorkerAsync(0);
                 }
+                label1.Text = "Performing Background Tasks...";
             };
             channel.BasicConsume(queue: "hello", autoAck: true, consumer: consumer);
-        }
-
-        private void start_Click(object sender, EventArgs e)
-        {
-            //if (!backgroundWorker2.IsBusy)
-            //    backgroundWorker2.RunWorkerAsync("ok");
-        }
-
-        private void end_Click(object sender, EventArgs e)
-        {
-            if (backgroundWorker2.WorkerSupportsCancellation == true)
-            {
-                // Cancel the asynchronous operation.
-                backgroundWorker2.CancelAsync();
-            }
         }
 
         private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
@@ -82,9 +68,12 @@ namespace BackgroundWorker
 
         private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (e.Cancelled) MessageBox.Show("Operation was canceled");
-            else if (e.Error != null) MessageBox.Show(e.Error.Message);
-            else MessageBox.Show(e.Result.ToString());
+            if (e.Cancelled) label1.Text = "Operation was canceled";//MessageBox.Show("Operation was canceled");
+            else if (e.Error != null) label1.Text = e.Error.Message; //MessageBox.Show(e.Error.Message);
+            else label1.Text = e.Result.ToString(); //MessageBox.Show(e.Result.ToString());
+
+            Thread.Sleep(2000);
+            label1.Text = "Listening RabitMQ Messages...";
         }
 
         private string BackgroundProcessLogicMethod(System.ComponentModel.BackgroundWorker bw, int a)
